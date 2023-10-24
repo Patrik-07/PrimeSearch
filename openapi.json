@@ -1,0 +1,98 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Prime Search",
+    "description": "This is a Kotlin Spring web API documantation for searching primes.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    }
+  ],
+  "paths": {
+    "/search/start": {
+      "post": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Start the prime searching.",
+        "description": "Start the prime searching with the given thread count.",
+        "parameters": [
+          {
+            "name": "threads",
+            "in": "query",
+            "description": "Thread count for multithread prime searching",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "405": {
+            "description": "Bad request ()The searching is already started.)"
+          }
+        }
+      }
+    },
+    "/search/list": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Returns the prime numbers.",
+        "description": "Returns the prime numbers in a given range.",
+        "parameters": [
+          {
+            "name": "min",
+            "in": "query",
+            "description": "Minimum value of the range.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "max",
+            "in": "query",
+            "description": "Maximum value of the range.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok"
+          },
+          "405": {
+            "description": "Bad request (Prime listing error)"
+          }
+        }
+      }
+    },
+    "/search/stop": {
+      "post": {
+        "tags": [
+          "search"
+        ],
+        "summary": "Stop the prime searching.",
+        "description": "Stop the prime searching.",
+        "responses": {
+          "200": {
+            "description": "Ok"
+          }
+        }
+      }
+    }
+  }
+}
