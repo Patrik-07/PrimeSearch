@@ -1,5 +1,4 @@
-# PrimeSearch
-## Kotlin Spring Boot PrimeSearch API
+# Kotlin Spring Boot PrimeSearch API
 
 - /search/start -> Start the searching with a given thread count.
 - /list         -> List the prime numbers in a given range.
