@@ -4,7 +4,7 @@
 - /list         -> List the prime numbers in a given range.
 - /search/stop  -> Stop the searching.
 
-I created some unit tests. Feel free to run them.
+I created some [unit tests](https://github.com/Patrik-07/PrimeSearch/blob/master/src/test/kotlin/mbh/primesearch/PrimeSearchApplicationTests.kt). Feel free to run them.
 
 Here is the [OpenAPI descriptor](https://github.com/Patrik-07/PrimeSearch/blob/master/openapi.json), for the easier testing.
 
