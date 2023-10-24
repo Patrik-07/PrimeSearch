@@ -1,59 +1,69 @@
 package mbh.primesearch.services
 
-import mbh.primesearch.repositories.PrimeRepository
+import mbh.primesearch.utils.*
 import org.springframework.stereotype.Service
-import java.lang.Exception
-import kotlin.math.sqrt
+import java.util.SortedSet
 
 @Service
-class PrimeSearchService(private val primeRepository: PrimeRepository) {
-    val collectedPrimeNumbers: List<Long> get() = primeRepository.collectedPrimeNumbers
-    private val primeNumbers = mutableListOf<Long>()
+class PrimeSearchService {
+    private val searcherManager = PrimeSearchManager()
+    private val minimumPrimeCount = 1000
+    private val maximumThreadCount = 5
 
-    fun getPrimeNumbers(min: Int, max: Int): List<Long> {
-        if (max - min > 1000) {
-            throw Exception("To big interval")
+    fun startSearch(threadCount: Int) {
+        if (threadCount > maximumThreadCount) {
+            throw ThreadCountExceededException()
         }
-
-        return primeNumbers.subList(min, max)
+        searcherManager.startSearch(threadCount)
     }
 
-    fun startSearch() {
+    fun getPrimes(min: Int, max: Int): List<Int> {
+        synchronized(searcherManager) {
+            checkValidRange(min, max)
+            checkRangeBound(min, max)
 
+            val primes: List<Int> = filterSetByRange(searcherManager.primes, min, max)
+
+            checkPrimeCount(primes)
+
+            return primes
+        }
     }
 
     fun stopSearch() {
-
+        searcherManager.stopSearch()
     }
 
-    fun isPrime(number: Long): Boolean {
-        if (number <= 1) return false
-        if (number <= 3) return true
-        if (number % 2 == 0L || number % 3 == 0L) return false
-
-        var i = 5L
-        while (i * i <= number) {
-            if (number % i == 0L || number % (i + 2) == 0L) {
-                return false
-            }
-            i += 6
+    private fun checkValidRange(min: Int, max: Int) {
+        if (min > max) {
+            throw InvalidRangeException()
         }
-
-        return true
     }
 
-    fun findNthPrime(n: Long, startFrom: Long): Long {
-        if (n <= 0) {
-            throw IllegalArgumentException("N must be a positive integer.")
+    private fun checkRangeBound(min: Int, max: Int) {
+        val isMinInRange = min in searcherManager.rangeLimit
+        val isMaxInRange = max in searcherManager.rangeLimit
+
+        if (!isMinInRange || !isMaxInRange) {
+            throw RangeBoundExceededException()
         }
+    }
 
-        var number = startFrom + 1
+    private fun checkPrimeCount(primes: List<Int>) {
+        if (primes.size > minimumPrimeCount) {
+            throw PrimeCountExceededException()
+        }
+    }
 
-        while (true) {
-            if (isPrime(number)) {
-                return number
+    private fun filterSetByRange(allPrimes: SortedSet<Int>, min: Int, max: Int): List<Int> {
+        val primes = mutableListOf<Int>()
+
+        for (prime in allPrimes) {
+            if (prime in min .. max) {
+                primes.add(prime)
             }
-            number++
         }
+
+        return primes
     }
 }
